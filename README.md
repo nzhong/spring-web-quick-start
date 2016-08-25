@@ -1,12 +1,13 @@
 SPRING WEB QUICKSTART
 =====================
 
-This repo contains four simple sub-projects, <b>one</b>, <b>two</b>, <b>three</b>, and <b>four</b>. Each one is built on top of the previous one, and add just a little bit of code:
+This repo contains five simple sub-projects, <b>one</b>, <b>two</b>, <b>three</b>, <b>four</b>, and <b>five</b>. Each one is built on top of the previous one, and add just a little bit of code:
 
 - <b>one</b>: a minimal web servlet handler, with just <a href="http://www.eclipse.org/jetty/">Jetty</a>. No Spring. We can answer servlet requests now.
 - <b>two</b>: Jetty from <b>one</b>, and by loading <a href="http://spring.io/">Spring</a> 's WebApplicationInitializer upon start-up, load the SpringCore and SpringWeb into the project. We now have a full REST server.
 - <b>three</b>: Built on top of <b>two</b>, and add Spring Security. Now we can see that certain endpoints requires authentication.
 - <b>four</b>: Based on <b>three</b>, with spring-data-mongodb integrated. We can now save and read Java objects from the database (to run this sub-project, you need a local mongodb instance running on localhost:27017).
+- <b>five</b>: Now that we have a database backend, we can do some real password authentications.
 
 # one
 
@@ -87,4 +88,29 @@ load http://127.0.0.1:9004/spring/read again, and you should see
     "3": ["3x", "3z"]
   }
 }
+```
+
+# five
+
+<b>Similar to four, to run this sub-project, you need a local mongodb instance running on localhost:27017</b>
+
+In this project we turned authentication on "/spring/\**" back on. In SecurityConfig we also wired in a LocalAuthenticationProvider, which checked username/password from the mongoDb. For this flow to work, we added AppUser/AppUserRepository class just like the Customer/CustomerRepository in four, and seeded one user (test/test) in the beginning (SecurityConfig). Finally we specified the after login success url to be "/spring/status"
+
+```
+> mvn clean package
+> java -jar five/target/five-1.0-SNAPSHOT.jar
+
+in your browser load http://127.0.0.1:9005/spring/status
+you should see the login form.
+
+try anything other than test/test, login should fail.
+with test/test, page should forward to http://127.0.0.1:9005/spring/status
+
+now try any of the three:
+http://127.0.0.1:9005/spring/status
+http://127.0.0.1:9005/spring/seed
+http://127.0.0.1:9005/spring/read
+they should all work, since this is session based, and our session is still good.
+
+load http://127.0.0.1:9005/logout and then try the above three URLs you will see the login form again
 ```

@@ -33,5 +33,6 @@
         <module>two</module>
         <module>three</module>
         <module>four</module>
+        <module>five</module>
     </modules>
 </project>
