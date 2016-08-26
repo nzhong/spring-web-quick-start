@@ -34,5 +34,6 @@
         <module>three</module>
         <module>four</module>
         <module>five</module>
+        <module>six</module>
     </modules>
 </project>

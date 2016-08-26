@@ -1,13 +1,14 @@
 SPRING WEB QUICKSTART
 =====================
 
-This repo contains five simple sub-projects, <b>one</b>, <b>two</b>, <b>three</b>, <b>four</b>, and <b>five</b>. Each one is built on top of the previous one, and add just a little bit of code:
+This repo contains six simple sub-projects, <b>one</b>, <b>two</b>, <b>three</b>, <b>four</b>, <b>five</b>, and <b>six</b>. Each one is built on top of the previous one, and add just a little bit of code:
 
 - <b>one</b>: a minimal web servlet handler, with just <a href="http://www.eclipse.org/jetty/">Jetty</a>. No Spring. We can answer servlet requests now.
 - <b>two</b>: Jetty from <b>one</b>, and by loading <a href="http://spring.io/">Spring</a> 's WebApplicationInitializer upon start-up, load the SpringCore and SpringWeb into the project. We now have a full REST server.
 - <b>three</b>: Built on top of <b>two</b>, and add Spring Security. Now we can see that certain endpoints requires authentication.
 - <b>four</b>: Based on <b>three</b>, with spring-data-mongodb integrated. We can now save and read Java objects from the database (to run this sub-project, you need a local mongodb instance running on localhost:27017).
 - <b>five</b>: Now that we have a database backend, we can do some real password authentications.
+- <b>six</b>: use JWT token based authentication to replace Cookie based sessions.
 
 # one
 
@@ -113,4 +114,33 @@ http://127.0.0.1:9005/spring/read
 they should all work, since this is session based, and our session is still good.
 
 load http://127.0.0.1:9005/logout and then try the above three URLs you will see the login form again
+```
+
+# six
+
+<b>Similar to four, to run this sub-project, you need a local mongodb instance running on localhost:27017</b>
+
+In this project we added an AppCustomFilter just before the spring built in UsernamePasswordAuthenticationFilter. The AppCustomFilter looks for "X-AUTH-TOKEN" in the request header, and if found, figure out which user this is. We are still using the authentication system in five (LocalAuthenticationProvider), just turned the previous cookie+session to token based. For this flow to work, we did a couple of things:
+
+- AppCustomFilter will let /login request to go through without a valid token
+- Upon login success (in http.formLogin().successHandler), we invalidate sessions, and send the token for the current user back to the client
+- in AppCustomFilter, if token is valid, we call a `SecurityContextHolder.getContext().setAuthentication(loginUser)` before calling the next one in chain, which is most likely UsernamePasswordAuthenticationFilter.
+
+```
+> mvn clean package
+> java -jar six/target/six-1.0-SNAPSHOT.jar
+
+in your browser load http://127.0.0.1:9006/spring/status
+you should see a 'Invalid authentication' error
+
+try http://127.0.0.1:9006/login
+with test/test, you should see a long hash like string,
+eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0In0.Gw0qZV9TnQulU8732vLPTS-ydKLgiRUz1MEuWgesb0ic1NABFU5LGcWq-SE48etJnR9yxcjF9U6bHPEzOp552Q
+
+Now load http://127.0.0.1:9006/spring/status
+you should still see a 'Invalid authentication' error, because we are token based not session based now.
+
+From a command prompt capable of curl, do a
+curl --header "X-AUTH-TOKEN: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0In0.Gw0qZV9TnQulU8732vLPTS-ydKLgiRUz1MEuWgesb0ic1NABFU5LGcWq-SE48etJnR9yxcjF9U6bHPEzOp552Q" http://127.0.0.1:9006/spring/status
+you should see a valid result.
 ```
