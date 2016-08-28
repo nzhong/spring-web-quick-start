@@ -1,7 +1,7 @@
 SPRING WEB QUICKSTART
 =====================
 
-This repo contains six simple sub-projects, <b>one</b>, <b>two</b>, <b>three</b>, <b>four</b>, <b>five</b>, and <b>six</b>. Each one is built on top of the previous one, and add just a little bit of code:
+This repo contains seven simple sub-projects, <b>one</b>, <b>two</b>, <b>three</b>, <b>four</b>, <b>five</b>, <b>six</b>, and <b>seven</b>. Each one is built on top of the previous one, and add just a little bit of code:
 
 - <b>one</b>: a minimal web servlet handler, with just <a href="http://www.eclipse.org/jetty/">Jetty</a>. No Spring. We can answer servlet requests now.
 - <b>two</b>: Jetty from <b>one</b>, and by loading <a href="http://spring.io/">Spring</a> 's WebApplicationInitializer upon start-up, load the SpringCore and SpringWeb into the project. We now have a full REST server.
@@ -9,6 +9,7 @@ This repo contains six simple sub-projects, <b>one</b>, <b>two</b>, <b>three</b>
 - <b>four</b>: Based on <b>three</b>, with spring-data-mongodb integrated. We can now save and read Java objects from the database (to run this sub-project, you need a local mongodb instance running on localhost:27017).
 - <b>five</b>: Now that we have a database backend, we can do some real password authentications.
 - <b>six</b>: use JWT token based authentication to replace Cookie based sessions.
+- <b>seven</b>: Okta/SAML integration.
 
 # one
 
@@ -144,3 +145,8 @@ From a command prompt capable of curl, do a
 curl --header "X-AUTH-TOKEN: eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0In0.Gw0qZV9TnQulU8732vLPTS-ydKLgiRUz1MEuWgesb0ic1NABFU5LGcWq-SE48etJnR9yxcjF9U6bHPEzOp552Q" http://127.0.0.1:9006/spring/status
 you should see a valid result.
 ```
+
+
+# seven
+
+Added Okta/SAML integration via Spring-Security-SAML.
